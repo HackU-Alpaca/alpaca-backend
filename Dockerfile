@@ -14,4 +14,4 @@ RUN pip install -r requirements.txt
 
 COPY src ./src/
 EXPOSE 5000
-CMD ["python", "./src/app.py"]
+CMD ["python", "./src/main.py"]
