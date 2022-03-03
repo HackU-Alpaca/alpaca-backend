@@ -1,0 +1,6 @@
+build:
+  docker:
+    web: Dockerfile
+  config:
+    CHANNEL_ACCESS_TOKEN: $CHANNEL_ACCESS_TOKEN
+    CHANNEL_SECRET: $CHANNEL_SECRET
