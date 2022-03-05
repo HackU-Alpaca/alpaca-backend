@@ -6,8 +6,13 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    MessageEvent,
+    # PostbackEvent,
+    TextMessage,
+    FlexSendMessage,
+    TextSendMessage,
 )
+from reply_json import get_register_tag_carousel
 import os
 import dotenv
 
@@ -46,15 +51,53 @@ def callback():
 
 
 # =========================
-# おうむ返し機能
+# LINEBOTの返信機能
 # =========================
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    print('handle_message')
     text_sent_by_user = event.message.text
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=text_sent_by_user)
-    )
+
+    # ユーザーのタグ登録を開始
+    if text_sent_by_user == "登録する":
+        line_bot_api.reply_message(
+            event.reply_token,
+            messages=FlexSendMessage.new_from_json_dict(
+                get_register_tag_carousel()
+            )
+        )
+    # タグを登録
+    elif text_sent_by_user.endswith("を登録する"):
+        tag = text_sent_by_user[:len("を登録する")]
+        # TODO: firebase に登録
+        line_bot_api.reply_message(
+            event.reply_token,
+            messages=TextSendMessage(text=f'{tag}を登録しました')
+        )
+    # タグを登録解除
+    elif text_sent_by_user.endswith("を登録解除する"):
+        tag = text_sent_by_user[:len("を登録解除する")]
+        # TODO: firebase から削除
+        line_bot_api.reply_message(
+            event.reply_token,
+            messages=TextSendMessage(text=f'{tag}を登録解除しました')
+        )
+    # 投稿機能
+    elif text_sent_by_user == "投稿する":
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='まだ実装されていません。')
+        )
+    else:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text='メニューから選択してください。')
+        )
+
+
+# @handler.add(PostbackEvent)
+# def handle_postback(event):
+#     if event.postback.data == '':
 
 
 # python main.py　で動作
