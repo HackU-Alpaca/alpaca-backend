@@ -1,4 +1,5 @@
-from flask import Flask, request, abort
+from flask import Flask, request, abort, render_template, jsonify
+from flask_bootstrap import Bootstrap
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -8,6 +9,7 @@ from linebot.exceptions import (
 from linebot.models import (
     MessageEvent,
     # PostbackEvent,
+    StickerSendMessage,
     TextMessage,
     FlexSendMessage,
     TextSendMessage,
@@ -17,6 +19,7 @@ import os
 import dotenv
 
 app = Flask(__name__)
+bootstrap = Bootstrap(app)
 
 # =========================
 # 環境変数取得
@@ -56,6 +59,7 @@ def callback():
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     print('handle_message')
+    print(event.reply_token)
     text_sent_by_user = event.message.text
 
     # ユーザーのタグ登録を開始
@@ -82,22 +86,35 @@ def handle_message(event):
             event.reply_token,
             messages=TextSendMessage(text=f'{tag}を登録解除しました')
         )
-    # 投稿機能
-    elif text_sent_by_user == "投稿する":
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text='まだ実装されていません。')
-        )
-    else:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text='メニューから選択してください。')
-        )
 
 
-# @handler.add(PostbackEvent)
-# def handle_postback(event):
-#     if event.postback.data == '':
+# =========================
+# LIFE
+# =========================
+@app.route('/cheer-form', methods=['GET'])
+def get_cheer_form():
+    return render_template('index.html')
+
+
+@app.route('/cheer-form', methods=['POST'])
+def post_cheer_form():
+    event = request.form.to_dict()
+    print(event)
+
+    # TODO: firebase に保存
+    tag = event['tag']
+    message = event['message']
+    reply_message = f'応援メッセージを送信しました。\n\n{tag}へ\n{message}'
+
+    userId = event['userId']
+    line_bot_api.push_message(
+        userId,
+        [
+            TextSendMessage(text=reply_message),
+            StickerSendMessage(package_id=6325, sticker_id=10979912),
+        ])
+
+    return jsonify({'message': 'SUCCESS: post message to firebase'})
 
 
 # python main.py　で動作
