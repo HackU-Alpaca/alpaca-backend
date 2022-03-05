@@ -1,0 +1,47 @@
+{% extends "bootstrap/base.html" %}
+
+{%- block metas %}
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+{%- endblock metas %}
+
+{% block scripts %}
+{{super()}}
+  <script src="https://static.line-scdn.net/liff/edge/versions/2.18.2/sdk.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>  
+  <script>
+    $(window).on('load', async function() {
+      await liff.init({liffId: process.env.LIFFID});
+
+      // ユーザーIDをhidden属性に保存
+      const context = liff.getContext();
+      const userId = context.userId;
+      $('#userId').val(userId);
+    });
+
+    $('#form').submit(function() {
+      liff.closeWindow();
+    });
+  </script>
+{% endblock %}
+
+{% block title %}応援メッセージ投稿フォーム{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form id="form" action="/cheer-form" method="POST">
+        <div>
+          <p>対象</p>
+          <input type="text" id="tag" name="tag"/>
+        </div>
+        <div>
+          <p>応援内容</p>
+          <input type="text" id="message" name="message"/>
+        </div>
+        <div>
+          <input type="hidden" id="userId" name="userId"/>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">投稿</button>
+    </form>
+</div>
+{% endblock %}
