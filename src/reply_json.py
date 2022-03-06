@@ -197,3 +197,57 @@ def register_tag_message(url, name, comment, registered):
         },
 
     }
+
+
+def get_flex_message():
+    url = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip3.jpg"
+    name = "医療従事者の皆様へ"
+    message = "いつもありがとうございます\nあああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ"
+
+    return {
+        "type": "bubble",
+        "body": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+                {
+                    "type": "image",
+                    "url": url,
+                    "size": "full",
+                    "aspectMode": "cover",
+                    "aspectRatio": "1:1",
+                    "gravity": "center",
+                },
+                {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                        {
+                            "type": "text",
+                            "text": name,
+                            "size": "xl",
+                            "color": "#ffffff",
+                            "contents": [],
+                            "weight": "regular",
+                            "flex": 0,
+                        },
+                        {
+                            "type": "text",
+                            "text": message,
+                            "color": "#ffffff",
+                            "size": "lg",
+                            "wrap": True,
+                            "maxLines": 8,
+                            "gravity": "center",
+                            "flex": 1,
+                        },
+                    ],
+                    "position": "absolute",
+                    "paddingAll": "20px",
+                    "height": "100%",
+                    "justifyContent": "flex-start",
+                },
+            ],
+            "paddingAll": "0px",
+        },
+    }

@@ -14,7 +14,7 @@ from linebot.models import (
     FlexSendMessage,
     TextSendMessage,
 )
-from reply_json import get_register_tag_carousel
+from reply_json import get_register_tag_carousel, get_flex_message
 import os
 import dotenv
 
@@ -87,6 +87,19 @@ def handle_message(event):
             event.reply_token,
             messages=TextSendMessage(text=f'{tag}を登録解除しました')
         )
+
+
+# 毎日のメッセージを送信する
+@app.route('/send_daily_message', methods=['GET'])
+def send_daily_message():
+    # TODO:
+    # 1. Firebase からタグ情報を全て取得する
+    # 2. タグで forループ (3~5)
+    # 3. where(tag) でユーザーを取得
+    # 4. ユーザーが存在する場合に, get_flex_message でメッセージを取得
+    # 5. ユーザーに対してメッセージを送信
+    #    line_bot_api.push_message ...
+    return get_flex_message()
 
 
 # =========================
