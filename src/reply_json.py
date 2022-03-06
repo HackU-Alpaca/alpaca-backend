@@ -1,5 +1,8 @@
 # タグを登録するカルーセルを返す
-def get_register_tag_carousel():
+def get_register_tag_carousel(user_id):
+    # TODO: firebase から情報を取得
+    print(user_id)
+
     url1 = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip1.jpg"
     name1 = "医療従事者の皆さん"
     comment1 = 34

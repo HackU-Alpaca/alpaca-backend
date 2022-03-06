@@ -60,6 +60,7 @@ def callback():
 def handle_message(event):
     print('handle_message')
     print(event.reply_token)
+    user_id = event.source.user_id
     text_sent_by_user = event.message.text
 
     # ユーザーのタグ登録を開始
@@ -67,7 +68,7 @@ def handle_message(event):
         line_bot_api.reply_message(
             event.reply_token,
             messages=FlexSendMessage.new_from_json_dict(
-                get_register_tag_carousel()
+                get_register_tag_carousel(user_id)
             )
         )
     # タグを登録
@@ -93,6 +94,7 @@ def handle_message(event):
 # =========================
 @app.route('/cheer-form', methods=['GET'])
 def get_cheer_form():
+    # TODO: タグ一覧を渡す
     return render_template('index.html')
 
 
