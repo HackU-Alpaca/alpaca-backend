@@ -14,4 +14,7 @@
     "python.formatting.autopep8Args": [
         "--aggressive", "--aggressive",
     ],
+    "files.associations": {
+        "*.html": "jinja-html"
+    }
 }
