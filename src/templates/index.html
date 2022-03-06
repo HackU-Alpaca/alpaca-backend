@@ -10,7 +10,8 @@
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>  
   <script>
     $(window).on('load', async function() {
-      await liff.init({liffId: process.env.LIFFID});
+      const LIFFID = {{ LIFFID | tojson }};
+      await liff.init({liffId: LIFFID});
 
       // ユーザーIDをhidden属性に保存
       const context = liff.getContext();

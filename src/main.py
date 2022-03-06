@@ -28,6 +28,7 @@ bootstrap = Bootstrap(app)
 dotenv.load_dotenv()
 CHANNEL_ACCESS_TOKEN = os.environ["CHANNEL_ACCESS_TOKEN"]
 CHANNEL_SECRET = os.environ["CHANNEL_SECRET"]
+LIFFID = os.environ["LIFFID"]
 
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
@@ -108,7 +109,7 @@ def send_daily_message():
 @app.route('/cheer-form', methods=['GET'])
 def get_cheer_form():
     # TODO: タグ一覧を渡す
-    return render_template('index.html')
+    return render_template('index.html', LIFFID=LIFFID)
 
 
 @app.route('/cheer-form', methods=['POST'])
