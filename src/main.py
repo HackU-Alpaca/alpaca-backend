@@ -109,7 +109,7 @@ def send_daily_message():
 @app.route('/cheer-form', methods=['GET'])
 def get_cheer_form():
     # TODO: タグ一覧を渡す
-    return render_template('index.html')
+    return render_template('index.html', LIFFID=LIFFID)
 
 
 # 確認画面に遷移
@@ -119,6 +119,7 @@ def post_cheer_form():
     event = request.form.to_dict()
     tag = event['tag']
     message = event['message']
+    userId = event['userId']
 
     # TODO:
     # バリデーションを走らせる
@@ -127,7 +128,7 @@ def post_cheer_form():
 
     return render_template(
         'confirm.html',
-        LIFFID=LIFFID,
+        userId=userId,
         tag=tag,
         message=message)
 
