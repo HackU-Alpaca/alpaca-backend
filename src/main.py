@@ -133,7 +133,7 @@ def post_cheer_form():
         message=message)
 
 
-# 確認画面から投稿
+# 確認画面から投稿, 終了画面に遷移
 # - Firebaseに保存
 # - LINEに確認メッセージを送信
 @app.route('/cheer-form-confirm', methods=['POST'])
@@ -154,7 +154,7 @@ def post_cheer_form_confirm():
             StickerSendMessage(package_id=6325, sticker_id=10979912),
         ])
 
-    return jsonify({'message': 'SUCCESS: post message to firebase'})
+    return render_template('end.html')
 
 
 # python main.py　で動作
