@@ -1,0 +1,80 @@
+{% extends "bootstrap/base.html" %}
+
+{%- block metas %}
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+{%- endblock metas %}
+
+{% block scripts %}
+{{super()}}
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://static.line-scdn.net/liff/edge/versions/2.18.2/sdk.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>  
+  <script>
+    $(window).on('load', async function() {
+      const LIFFID = {{ LIFFID | tojson }};
+      await liff.init({liffId: LIFFID});
+
+      // ユーザーIDをhidden属性に保存
+      const context = liff.getContext();
+      const userId = context.userId;
+      $('#userId').val(userId);
+    });
+
+    // TODO: 閉じなかったので後で修正
+    // $('#form').submit(function() {
+    //   liff.closeWindow();
+    // });
+  </script>
+{% endblock %}
+
+{% block title %}応援メッセージ投稿フォーム{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+  <form class="w-75 mx-auto" id="form" action="/cheer-form-confirm" method="POST">
+    <h3 class="text-center">確認画面</h3>
+
+    {# 対象 #}
+    <div class="col my-3">
+      <h5 class="text-md-left trn h5">対象</h5>
+      <input
+        id="tag"
+        name="tag"
+        value="{{ tag }}"
+        onclick=""
+        style="outline:none; border:none;"
+        readonly/>
+    </div>
+
+    {# 応援内容 #}
+    <div class="col my-3">
+      <h5 class="text-md-left trn">応援内容</h5>
+      <input
+        id="message"
+        name="message"
+        value="{{ message }}"
+        style="outline:none; border:none;"
+        readonly/>
+    </div>
+
+    {# ユーザーIDを保存 #}
+    <input type="hidden" id="userId" name="userId"/>
+
+    {# 投稿ボタン・戻るボタン #}
+    <div class="row justify-content-around mt-5">
+      <a href="#"
+        class="col-4"
+        onclick="window.history.back(); return false;"
+        style="padding:0"
+      >
+        <button type="button" class="btn btn-secondary w-100">
+          戻る
+        </button>
+      </a>
+      <button type="submit" class="btn btn-primary col-4">
+        投稿
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

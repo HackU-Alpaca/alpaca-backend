@@ -6,17 +6,16 @@
 
 {% block scripts %}
 {{super()}}
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <script src="https://static.line-scdn.net/liff/edge/versions/2.18.2/sdk.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>  
   <script>
-    $(window).on('load', async function() {
-      const LIFFID = {{ LIFFID | tojson }};
-      await liff.init({liffId: LIFFID});
-
-      // ユーザーIDをhidden属性に保存
-      const context = liff.getContext();
-      const userId = context.userId;
-      $('#userId').val(userId);
+    // ドロップダウンの値を更新
+    $('.dropdown-menu .dropdown-item').click(function(){
+        const visibleItem = $('.dropdown-toggle', $(this).closest('.dropdown'));
+        const selectedValue = $(this).attr('value');
+        visibleItem.text(selectedValue);
+         $('#tag').val(selectedValue);
     });
 
     // TODO: 閉じなかったので後で修正
@@ -29,21 +28,54 @@
 {% block title %}応援メッセージ投稿フォーム{% endblock %}
 
 {% block content %}
-<div class="container">
-    <form id="form" action="/cheer-form" method="POST">
-        <div>
-          <p>対象</p>
-          <input type="text" id="tag" name="tag"/>
-        </div>
-        <div>
-          <p>応援内容</p>
-          <input type="text" id="message" name="message"/>
-        </div>
-        <div>
-          <input type="hidden" id="userId" name="userId"/>
-        </div>
+<div class="container mt-3">
+  <form class="w-75 mx-auto" id="form" action="/cheer-form" method="POST">
 
-        <button type="submit" class="btn btn-primary btn-block">投稿</button>
-    </form>
+    {# 対象 #}
+    <div class="col my-3">
+      <h5 class="text-md-left trn h5">対象</h5>
+      <input type="hidden" id="tag" name="tag"/>
+
+      <div class="dropdown">
+        <button
+          class="btn dropdown-toggle"
+          type="button"
+          id="tag"
+          name="tag"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          応援対象を選択してください
+        </button>
+
+        {# TODO: firebase から値を取得 #}
+        <ul class="dropdown-menu">
+          <li><button class="dropdown-item" type="button" value="医療従事者の皆様">
+            医療従事者の皆様
+          </button></li>
+          <li><button class="dropdown-item" type="button" value="飲食店の皆様">
+            飲食店の皆様
+          </button></li>
+          <li><button class="dropdown-item" type="button" value="その他">
+            その他
+          </button></li>
+        </ul>
+      </div>
+    </div>
+
+    {# 応援内容 #}
+    <div class="col my-3">
+      <h5 class="text-md-left trn h5">応援内容</h5>
+      <textarea class="form-control trn" type="text" id="message" name="message" rows="4"></textarea>
+    </div>
+
+    {# 確認画面に遷移 #}
+    <div class="row justify-content-center mt-5">
+      <button type="submit" class="btn btn-primary col-6">
+        確認
+      </button>
+    </div>
+  </form>
 </div>
 {% endblock %}
