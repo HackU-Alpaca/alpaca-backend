@@ -10,16 +10,6 @@
   <script src="https://static.line-scdn.net/liff/edge/versions/2.18.2/sdk.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>  
   <script>
-    $(window).on('load', async function() {
-      const LIFFID = {{ LIFFID | tojson }};
-      await liff.init({liffId: LIFFID});
-
-      // ユーザーIDをhidden属性に保存
-      const context = liff.getContext();
-      const userId = context.userId;
-      $('#userId').val(userId);
-    });
-
     // TODO: 閉じなかったので後で修正
     // $('#form').submit(function() {
     //   liff.closeWindow();
@@ -58,7 +48,7 @@
     </div>
 
     {# ユーザーIDを保存 #}
-    <input type="hidden" id="userId" name="userId"/>
+    <input type="hidden" id="userId" name="userId" value="{{ userId }}"/>
 
     {# 投稿ボタン・戻るボタン #}
     <div class="row justify-content-around mt-5">

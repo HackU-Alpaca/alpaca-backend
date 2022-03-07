@@ -10,6 +10,15 @@
   <script src="https://static.line-scdn.net/liff/edge/versions/2.18.2/sdk.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>  
   <script>
+    $(window).on('load', async function() {
+      const LIFFID = {{ LIFFID | tojson }};
+      await liff.init({liffId: LIFFID});
+
+      const context = liff.getContext();
+      const userId = context.userId;
+      $('#userId').val(userId);
+    });
+
     // ドロップダウンの値を更新
     $('.dropdown-menu .dropdown-item').click(function(){
         const visibleItem = $('.dropdown-toggle', $(this).closest('.dropdown'));
@@ -17,11 +26,6 @@
         visibleItem.text(selectedValue);
          $('#tag').val(selectedValue);
     });
-
-    // TODO: 閉じなかったので後で修正
-    // $('#form').submit(function() {
-    //   liff.closeWindow();
-    // });
   </script>
 {% endblock %}
 
@@ -69,6 +73,9 @@
       <h5 class="text-md-left trn h5">応援内容</h5>
       <textarea class="form-control trn" type="text" id="message" name="message" rows="4"></textarea>
     </div>
+
+    {# ユーザーIDを保存 #}
+    <input type="hidden" id="userId" name="userId"/>
 
     {# 確認画面に遷移 #}
     <div class="row justify-content-center mt-5">
