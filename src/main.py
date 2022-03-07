@@ -109,11 +109,34 @@ def send_daily_message():
 @app.route('/cheer-form', methods=['GET'])
 def get_cheer_form():
     # TODO: タグ一覧を渡す
-    return render_template('index.html', LIFFID=LIFFID)
+    return render_template('index.html')
 
 
+# 確認画面に遷移
+# - バリデーション実行
 @app.route('/cheer-form', methods=['POST'])
 def post_cheer_form():
+    event = request.form.to_dict()
+    tag = event['tag']
+    message = event['message']
+
+    # TODO:
+    # バリデーションを走らせる
+    # 1. 値が入力されているかの確認
+    # 2. 誹謗中傷フィルタリング
+
+    return render_template(
+        'confirm.html',
+        LIFFID=LIFFID,
+        tag=tag,
+        message=message)
+
+
+# 確認画面から投稿
+# - Firebaseに保存
+# - LINEに確認メッセージを送信
+@app.route('/cheer-form-confirm', methods=['POST'])
+def post_cheer_form_confirm():
     event = request.form.to_dict()
     print(event)
 
