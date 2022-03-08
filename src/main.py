@@ -1,4 +1,4 @@
-from flask import Flask, request, abort, render_template, jsonify
+from flask import Flask, request, abort, render_template
 from flask_bootstrap import Bootstrap
 from linebot import (
     LineBotApi, WebhookHandler
