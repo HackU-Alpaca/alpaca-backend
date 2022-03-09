@@ -1,6 +1,6 @@
-import datetime
 import os
 
+from firebase_admin import firestore
 from flask import Flask, abort, render_template, request
 from flask_bootstrap import Bootstrap
 from linebot.exceptions import InvalidSignatureError
@@ -158,7 +158,7 @@ def post_cheer_form_confirm():
         "sentTo": tag,
         "context": message,
         "likes": 0,
-        "createdAt": datetime.datetime.now
+        "createdAt": firestore.firestore.SERVER_TIMESTAMP
     })
 
     reply_message = f'応援メッセージを送信しました。\n\n{tag}へ\n{message}'
