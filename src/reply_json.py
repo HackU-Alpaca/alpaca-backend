@@ -1,4 +1,4 @@
-from main import tag_collection, user_collection
+from settings import tag_collection, user_collection
 
 
 # タグを登録するカルーセルを返す

@@ -1,40 +1,16 @@
-import json
 import os
 
-import dotenv
-import firebase_admin
-from firebase_admin import credentials, firestore
 from flask import Flask, abort, render_template, request
 from flask_bootstrap import Bootstrap
-from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (FlexSendMessage, MessageEvent, StickerSendMessage,
                             TextMessage, TextSendMessage)
 
 from reply_json import get_flex_message, get_register_tag_carousel
+from settings import LIFFID, handler, line_bot_api, user_collection
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
-
-# =========================
-# 環境変数取得
-# LINE Developers: アクセストークン/ChannelSecret
-# =========================
-dotenv.load_dotenv()
-CHANNEL_ACCESS_TOKEN = os.environ["CHANNEL_ACCESS_TOKEN"]
-CHANNEL_SECRET = os.environ["CHANNEL_SECRET"]
-LIFFID = os.environ["LIFFID"]
-
-line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
-handler = WebhookHandler(CHANNEL_SECRET)
-
-# TODO: refactor here!
-cred = credentials.Certificate(json.loads(str(os.environ.get("FIREBASE_KEY"))))
-firebase_admin.initialize_app(cred)
-
-db = firestore.client()
-user_collection = db.collection('user')
-tag_collection = db.collection('type')
 
 
 # =========================
