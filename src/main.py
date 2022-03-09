@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from flask import Flask, abort, render_template, request
@@ -8,7 +9,8 @@ from linebot.models import (FlexSendMessage, MessageEvent, StickerSendMessage,
 
 from NGdetector.NGdetector import NGdetector
 from reply_json import get_flex_message, get_register_tag_carousel
-from settings import LIFFID, handler, line_bot_api, user_collection
+from settings import (LIFFID, handler, line_bot_api, message_collection,
+                      tag_collection, user_collection)
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -108,8 +110,12 @@ def send_daily_message():
 # =========================
 @app.route('/cheer-form', methods=['GET'])
 def get_cheer_form():
-    # TODO: タグ一覧を渡す
-    return render_template('index.html', LIFFID=LIFFID)
+    tag_docs = tag_collection.stream()
+    return render_template(
+        'index.html',
+        LIFFID=LIFFID,
+        tags=[tag_doc.id for tag_doc in tag_docs]
+    )
 
 
 # 確認画面に遷移
@@ -144,11 +150,17 @@ def post_cheer_form():
 @app.route('/cheer-form-confirm', methods=['POST'])
 def post_cheer_form_confirm():
     event = request.form.to_dict()
-    print(event)
 
-    # TODO: firebase に保存
     tag = event['tag']
     message = event['message']
+    # Firebase に保存
+    message_collection.document().set({
+        "sentTo": tag,
+        "context": message,
+        "likes": 0,
+        "createdAt": datetime.datetime.now
+    })
+
     reply_message = f'応援メッセージを送信しました。\n\n{tag}へ\n{message}'
 
     userId = event['userId']
