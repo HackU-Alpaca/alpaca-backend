@@ -1,7 +1,7 @@
 import os
 
 from firebase_admin import firestore
-from flask import Flask, abort, render_template, request
+from flask import Flask, abort, jsonify, render_template, request
 from flask_bootstrap import Bootstrap
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (FlexSendMessage, MessageEvent, StickerSendMessage,
@@ -93,16 +93,41 @@ def handle_message(event):
 
 
 # 毎日のメッセージを送信する
+# 登録しているタグごとに 1日1回のメッセージを送信
+# MEMO:
+# schedule.every() などで実装すべきであるが，
+# ハッカソンの発表で使用しやすいように /send_daily_message へのアクセルをトリガーとし,
+# Heroku scheduler で定期実行を行う
 @app.route('/send_daily_message', methods=['GET'])
 def send_daily_message():
-    # TODO:
-    # 1. Firebase からタグ情報を全て取得する
-    # 2. タグで forループ (3~5)
-    # 3. where(tag) でユーザーを取得
-    # 4. ユーザーが存在する場合に, get_flex_message でメッセージを取得
-    # 5. ユーザーに対してメッセージを送信
-    #    line_bot_api.push_message ...
-    return get_flex_message()
+    result = {}
+
+    tag_docs = tag_collection.stream()
+    for tag_doc in tag_docs:
+        user_docs = user_collection.where(
+            u'tags', u'array_contains_any', [
+                tag_doc.id]).get()
+        user_ids = [doc.id for doc in user_docs]
+
+        # ユーザーが存在する場合のみ処理を継続
+        if len(user_ids) == 0:
+            continue
+
+        # 直近24時間以内のメッセージを検索
+        message = get_flex_message(tag_doc.id)
+        if message is None:
+            continue
+
+        # メッセージを送信（送信数をメモ）
+        result[tag_doc.id] = len(user_ids)
+        line_bot_api.multicast(
+            user_ids,
+            FlexSendMessage.new_from_json_dict(
+                message
+            )
+        )
+
+    return jsonify(result)
 
 
 # =========================

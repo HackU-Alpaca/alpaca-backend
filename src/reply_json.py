@@ -1,4 +1,6 @@
-from settings import tag_collection, user_collection
+import datetime
+
+from settings import message_collection, tag_collection, user_collection
 
 
 # タグを登録するカルーセルを返す
@@ -196,10 +198,21 @@ def register_tag_message(url, name, comment, registered):
     }
 
 
-def get_flex_message():
+def get_flex_message(tag):
+    yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+    message = message_collection.where(
+        u'sentTo',
+        u'==',
+        tag).where(
+        u'createdAt',
+        u'>',
+        yesterday).limit(1).get()
+
+    if len(message) == 0:
+        return None
+
     url = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip3.jpg"
-    name = "医療従事者の皆様へ"
-    message = "いつもありがとうございます\nあああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ"
+    data = message[0].to_dict()
 
     return {
         "type": "bubble",
@@ -221,7 +234,7 @@ def get_flex_message():
                     "contents": [
                         {
                             "type": "text",
-                            "text": name,
+                            "text": data["sentTo"],
                             "size": "xl",
                             "color": "#ffffff",
                             "contents": [],
@@ -230,7 +243,7 @@ def get_flex_message():
                         },
                         {
                             "type": "text",
-                            "text": message,
+                            "text": data["context"],
                             "color": "#ffffff",
                             "size": "lg",
                             "wrap": True,
