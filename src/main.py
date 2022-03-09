@@ -53,7 +53,7 @@ def handle_message(event):
         )
     # タグを登録
     elif text_sent_by_user.endswith("を登録する"):
-        tag = text_sent_by_user[:len("を登録する")]
+        tag = text_sent_by_user[:- len("を登録する")]
 
         # ユーザーを取得
         user_ref = user_collection.document(user_id)
@@ -71,7 +71,7 @@ def handle_message(event):
         )
     # タグを登録解除
     elif text_sent_by_user.endswith("を登録解除する"):
-        tag = text_sent_by_user[:len("を登録解除する")]
+        tag = text_sent_by_user[:- len("を登録解除する")]
 
         # ユーザーを取得
         user_ref = user_collection.document(user_id)

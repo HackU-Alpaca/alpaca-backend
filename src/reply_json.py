@@ -35,7 +35,7 @@ def get_register_tag_carousel(user_id):
 
 # 登録済み・未登録のタグを返す
 def register_tag_message(url, name, comment, registered):
-    if registered:
+    if not registered:
         register_icon_url = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip14.png"
         register_button_message = '登録する'
         register_button_send_message = f'{name}を登録する'
