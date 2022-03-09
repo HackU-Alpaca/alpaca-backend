@@ -6,11 +6,13 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import (FlexSendMessage, MessageEvent, StickerSendMessage,
                             TextMessage, TextSendMessage)
 
+from NGdetector.NGdetector import NGdetector
 from reply_json import get_flex_message, get_register_tag_carousel
 from settings import LIFFID, handler, line_bot_api, user_collection
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
+NG_detector = NGdetector()
 
 
 # =========================
@@ -124,6 +126,11 @@ def post_cheer_form():
     # 1. 値が入力されているかの確認
     # 2. 誹謗中傷フィルタリング
 
+    # NGワードの有無判定
+    # NGDetector.check(text:str)->bool
+    # バリデーション実行時に使う
+    # TODO:
+    # 誹謗中傷フィルタ(DeepLearning)
     return render_template(
         'confirm.html',
         userId=userId,
