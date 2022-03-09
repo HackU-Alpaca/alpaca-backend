@@ -215,49 +215,53 @@ def get_flex_message(tag):
     data = message[0].to_dict()
 
     return {
-        "type": "bubble",
-        "body": {
-            "type": "box",
-            "layout": "vertical",
-            "contents": [
-                {
-                    "type": "image",
-                    "url": url,
-                    "size": "full",
-                    "aspectMode": "cover",
-                    "aspectRatio": "1:1",
-                    "gravity": "center",
-                },
-                {
-                    "type": "box",
-                    "layout": "vertical",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": data["sentTo"],
-                            "size": "xl",
-                            "color": "#ffffff",
-                            "contents": [],
-                            "weight": "regular",
-                            "flex": 0,
-                        },
-                        {
-                            "type": "text",
-                            "text": data["context"],
-                            "color": "#ffffff",
-                            "size": "lg",
-                            "wrap": True,
-                            "maxLines": 8,
-                            "gravity": "center",
-                            "flex": 1,
-                        },
-                    ],
-                    "position": "absolute",
-                    "paddingAll": "20px",
-                    "height": "100%",
-                    "justifyContent": "flex-start",
-                },
-            ],
-            "paddingAll": "0px",
-        },
+        "type": "flex",
+        "altText": "this is a flex message",
+        "contents": {
+            "type": "bubble",
+            "body": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "image",
+                        "url": url,
+                        "size": "full",
+                        "aspectMode": "cover",
+                        "aspectRatio": "1:1",
+                        "gravity": "center",
+                    },
+                    {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {
+                                "type": "text",
+                                "text": data["sentTo"],
+                                "size": "xl",
+                                "color": "#ffffff",
+                                "contents": [],
+                                "weight": "regular",
+                                "flex": 0,
+                            },
+                            {
+                                "type": "text",
+                                "text": data["context"],
+                                "color": "#ffffff",
+                                "size": "lg",
+                                "wrap": True,
+                                "maxLines": 8,
+                                "gravity": "center",
+                                "flex": 1,
+                            },
+                        ],
+                        "position": "absolute",
+                        "paddingAll": "20px",
+                        "height": "100%",
+                        "justifyContent": "flex-start",
+                    },
+                ],
+                "paddingAll": "0px",
+            },
+        }
     }
