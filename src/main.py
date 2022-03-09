@@ -78,7 +78,17 @@ def handle_message(event):
     # タグを登録
     elif text_sent_by_user.endswith("を登録する"):
         tag = text_sent_by_user[:len("を登録する")]
-        # TODO: firebase に登録
+
+        # ユーザーを取得
+        user_ref = user_collection.document(user_id)
+        user_doc = user_ref.get()
+        # タグを追加
+        tags = user_doc.to_dict()["tags"] if user_doc.exists else []
+        tags.append(tag)
+        user_ref.set(
+            {u'tags': tags}, merge=True
+        )
+
         line_bot_api.reply_message(
             event.reply_token,
             messages=TextSendMessage(text=f'{tag}を登録しました')
@@ -86,7 +96,16 @@ def handle_message(event):
     # タグを登録解除
     elif text_sent_by_user.endswith("を登録解除する"):
         tag = text_sent_by_user[:len("を登録解除する")]
-        # TODO: firebase から削除
+
+        # ユーザーを取得
+        user_ref = user_collection.document(user_id)
+        # タグを削除
+        tags = user_ref.get().to_dict()["tags"]
+        tags.remove(tag)
+        user_ref.set(
+            {u'tags': tags}, merge=True
+        )
+
         line_bot_api.reply_message(
             event.reply_token,
             messages=TextSendMessage(text=f'{tag}を登録解除しました')

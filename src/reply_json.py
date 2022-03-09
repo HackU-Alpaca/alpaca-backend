@@ -1,37 +1,34 @@
+from main import tag_collection, user_collection
+
+
 # タグを登録するカルーセルを返す
 def get_register_tag_carousel(user_id):
-    # TODO: firebase から情報を取得
-    print(user_id)
+    contents = []
 
-    url1 = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip1.jpg"
-    name1 = "医療従事者の皆さん"
-    comment1 = 34
-    registered1 = True
+    # ユーザーが登録しているタグ情報を取得
+    user_doc = user_collection.document(user_id).get()
+    user_tags = user_doc.to_dict()["tags"] if user_doc.exists else []
 
-    url2 = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip1.jpg"
-    name2 = "コロナに感染した皆さん"
-    comment2 = 120
-    registered2 = False
+    # 全てのタグ情報からメッセージを作成する
+    tag_docs = tag_collection.stream()
+    for tag_doc in tag_docs:
+        data = tag_doc.to_dict()
+
+        contents.append(
+            register_tag_message(
+                data["url"],
+                tag_doc.id,
+                100,  # TODO: fix here
+                tag_doc.id in user_tags
+            )
+        )
 
     return {
         "type": "flex",
         "altText": "this is a flex message",
         "contents": {
             "type": "carousel",
-            "contents": [
-                register_tag_message(
-                    url1,
-                    name1,
-                    comment1,
-                    registered1
-                ),
-                register_tag_message(
-                    url2,
-                    name2,
-                    comment2,
-                    registered2
-                )
-            ]
+            "contents": contents
         }
     }
 
