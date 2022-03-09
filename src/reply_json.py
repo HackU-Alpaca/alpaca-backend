@@ -1,4 +1,4 @@
-from models.message import latest_message_from_tag
+from models.message import count_message_from_tag, latest_message_from_tag
 from models.tag import Tag, tag_collection
 from models.user import User
 
@@ -18,7 +18,7 @@ def get_register_tag_carousel(uid):
             register_tag_message(
                 tag.url,
                 tag.name,
-                100,  # TODO: fix here
+                count_message_from_tag(tag.name),
                 tag.name in user.tags
             )
         )

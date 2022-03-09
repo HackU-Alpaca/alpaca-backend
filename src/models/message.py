@@ -6,6 +6,13 @@ from settings import db
 message_collection = db.collection('message')
 
 
+def count_message_from_tag(tag):
+    return len(message_collection.where(
+        u'sendTo',
+        u'==',
+        tag).get())
+
+
 def latest_message_from_tag(tag):
     yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
     message = message_collection.where(
