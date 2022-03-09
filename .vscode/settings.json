@@ -16,5 +16,8 @@
     ],
     "files.associations": {
         "*.html": "jinja-html"
+    },
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
     }
 }

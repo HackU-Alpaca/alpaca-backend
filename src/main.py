@@ -1,22 +1,17 @@
-from flask import Flask, request, abort, render_template
-from flask_bootstrap import Bootstrap
-from linebot import (
-    LineBotApi, WebhookHandler
-)
-from linebot.exceptions import (
-    InvalidSignatureError
-)
-from linebot.models import (
-    MessageEvent,
-    # PostbackEvent,
-    StickerSendMessage,
-    TextMessage,
-    FlexSendMessage,
-    TextSendMessage,
-)
-from reply_json import get_register_tag_carousel, get_flex_message
+import json
 import os
+
 import dotenv
+import firebase_admin
+from firebase_admin import credentials, firestore
+from flask import Flask, abort, render_template, request
+from flask_bootstrap import Bootstrap
+from linebot import LineBotApi, WebhookHandler
+from linebot.exceptions import InvalidSignatureError
+from linebot.models import (FlexSendMessage, MessageEvent, StickerSendMessage,
+                            TextMessage, TextSendMessage)
+
+from reply_json import get_flex_message, get_register_tag_carousel
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
