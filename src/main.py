@@ -28,6 +28,14 @@ LIFFID = os.environ["LIFFID"]
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 
+# TODO: refactor here!
+cred = credentials.Certificate(json.loads(str(os.environ.get("FIREBASE_KEY"))))
+firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+user_collection = db.collection('user')
+tag_collection = db.collection('type')
+
 
 # =========================
 # Webhookからのリクエストの署名検証部分
