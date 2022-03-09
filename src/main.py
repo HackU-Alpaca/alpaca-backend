@@ -15,6 +15,7 @@ from linebot.models import (
     TextSendMessage,
 )
 from reply_json import get_register_tag_carousel, get_flex_message
+from NGdetector import NGdetector
 import os
 import dotenv
 
@@ -32,7 +33,7 @@ LIFFID = os.environ["LIFFID"]
 
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
-
+NG_detector = NGdetector()
 
 # =========================
 # Webhookからのリクエストの署名検証部分
@@ -125,7 +126,12 @@ def post_cheer_form():
     # バリデーションを走らせる
     # 1. 値が入力されているかの確認
     # 2. 誹謗中傷フィルタリング
-
+    
+    # NGワードの有無判定
+    # NGDetector.check(text:str)->bool
+    # バリデーション実行時に使う
+    # TODO:
+    # 誹謗中傷フィルタ(DeepLearning)
     return render_template(
         'confirm.html',
         userId=userId,
