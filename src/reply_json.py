@@ -52,6 +52,7 @@ def register_tag_message(url, name, comment, registered):
 
     return {
         "type": "bubble",
+        "size": "kilo",
         "body": {
             "type": "box",
             "layout": "vertical",
@@ -61,7 +62,7 @@ def register_tag_message(url, name, comment, registered):
                     "url": url,
                     "size": "full",
                     "aspectMode": "cover",
-                    "aspectRatio": "2:3",
+                    "aspectRatio": "250:275",
                     "gravity": "top"
                 },
                 {
@@ -164,7 +165,7 @@ def register_tag_message(url, name, comment, registered):
                     "offsetStart": "0px",
                     "offsetEnd": "0px",
                     "backgroundColor": register_background_color,
-                    "paddingAll": "20px",
+                    "paddingAll": "10px",
                     "paddingTop": "18px"
                 },
                 {
@@ -188,11 +189,9 @@ def register_tag_message(url, name, comment, registered):
                     "height": "25px",
                     "width": "53px"
                 },
-
             ],
             "paddingAll": "0px"
         },
-
     }
 
 
