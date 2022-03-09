@@ -6,6 +6,7 @@ from settings import db
 message_collection = db.collection('message')
 
 
+# タグ名から応援メッセージの件数をカウント
 def count_message_from_tag(tag):
     return len(message_collection.where(
         u'sendTo',
@@ -13,6 +14,8 @@ def count_message_from_tag(tag):
         tag).get())
 
 
+# 1日1回, ユーザーに通知するメッセージを返す
+# TODO: ここのロジックを詰める
 def latest_message_from_tag(tag):
     yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
     message = message_collection.where(
