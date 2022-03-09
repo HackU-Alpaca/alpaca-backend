@@ -24,6 +24,3 @@ cred = credentials.Certificate(json.loads(str(os.environ.get("FIREBASE_KEY"))))
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
-user_collection = db.collection('user')
-tag_collection = db.collection('type')
-message_collection = db.collection('message')

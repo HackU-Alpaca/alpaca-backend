@@ -1,16 +1,17 @@
 import os
 
-from firebase_admin import firestore
 from flask import Flask, abort, jsonify, render_template, request
 from flask_bootstrap import Bootstrap
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (FlexSendMessage, MessageEvent, StickerSendMessage,
                             TextMessage, TextSendMessage)
 
+from models.message import Message, message_collection
+from models.tag import tag_collection
+from models.user import User, user_ids_from_tag
 from NGdetector.NGdetector import NGdetector
 from reply_json import get_flex_message, get_register_tag_carousel
-from settings import (LIFFID, handler, line_bot_api, message_collection,
-                      tag_collection, user_collection)
+from settings import LIFFID, handler, line_bot_api
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
@@ -59,14 +60,10 @@ def handle_message(event):
     elif text_sent_by_user.endswith("を登録する"):
         tag = text_sent_by_user[:- len("を登録する")]
 
-        # ユーザーを取得
-        user_ref = user_collection.document(user_id)
-        user_doc = user_ref.get()
-        # タグを追加
-        tags = user_doc.to_dict()["tags"] if user_doc.exists else []
-        tags.append(tag)
-        user_ref.set(
-            {u'tags': tags}, merge=True
+        user = User.from_uid(user_id)
+        user.add_tag(tag)
+        user.ref.set(
+            user.to_dict(),
         )
 
         line_bot_api.reply_message(
@@ -77,13 +74,10 @@ def handle_message(event):
     elif text_sent_by_user.endswith("を登録解除する"):
         tag = text_sent_by_user[:- len("を登録解除する")]
 
-        # ユーザーを取得
-        user_ref = user_collection.document(user_id)
-        # タグを削除
-        tags = user_ref.get().to_dict()["tags"]
-        tags.remove(tag)
-        user_ref.set(
-            {u'tags': tags}, merge=True
+        user = User.from_uid(user_id)
+        user.remove_tag(tag)
+        user.ref.set(
+            user.to_dict(),
         )
 
         line_bot_api.reply_message(
@@ -104,10 +98,7 @@ def send_daily_message():
 
     tag_docs = tag_collection.stream()
     for tag_doc in tag_docs:
-        user_docs = user_collection.where(
-            u'tags', u'array_contains_any', [
-                tag_doc.id]).get()
-        user_ids = [doc.id for doc in user_docs]
+        user_ids = user_ids_from_tag(tag_doc.id)
 
         # ユーザーが存在する場合のみ処理を継続
         if len(user_ids) == 0:
@@ -179,12 +170,8 @@ def post_cheer_form_confirm():
     tag = event['tag']
     message = event['message']
     # Firebase に保存
-    message_collection.document().set({
-        "sentTo": tag,
-        "context": message,
-        "likes": 0,
-        "createdAt": firestore.firestore.SERVER_TIMESTAMP
-    })
+    message_collection.document().set(
+        Message(tag, message).to_dict())
 
     reply_message = f'応援メッセージを送信しました。\n\n{tag}へ\n{message}'
 

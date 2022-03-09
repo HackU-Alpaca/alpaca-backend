@@ -1,27 +1,25 @@
-import datetime
-
-from settings import message_collection, tag_collection, user_collection
+from models.message import latest_message_from_tag
+from models.tag import Tag, tag_collection
+from models.user import User
 
 
 # タグを登録するカルーセルを返す
-def get_register_tag_carousel(user_id):
+def get_register_tag_carousel(uid):
     contents = []
 
-    # ユーザーが登録しているタグ情報を取得
-    user_doc = user_collection.document(user_id).get()
-    user_tags = user_doc.to_dict()["tags"] if user_doc.exists else []
+    user = User.from_uid(uid)
 
     # 全てのタグ情報からメッセージを作成する
     tag_docs = tag_collection.stream()
     for tag_doc in tag_docs:
-        data = tag_doc.to_dict()
+        tag = Tag.from_dict(tag_doc.to_dict())
 
         contents.append(
             register_tag_message(
-                data["url"],
-                tag_doc.id,
+                tag.url,
+                tag.name,
                 100,  # TODO: fix here
-                tag_doc.id in user_tags
+                tag.name in user.tags
             )
         )
 
@@ -199,20 +197,10 @@ def register_tag_message(url, name, comment, registered):
 
 
 def get_flex_message(tag):
-    yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
-    message = message_collection.where(
-        u'sentTo',
-        u'==',
-        tag).where(
-        u'createdAt',
-        u'>',
-        yesterday).limit(1).get()
-
-    if len(message) == 0:
-        return None
-
     url = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip3.jpg"
-    data = message[0].to_dict()
+    message = latest_message_from_tag(tag)
+    if message is None:
+        return None
 
     return {
         "type": "flex",
@@ -237,7 +225,7 @@ def get_flex_message(tag):
                         "contents": [
                             {
                                 "type": "text",
-                                "text": data["sentTo"],
+                                "text": message.sendTo,
                                 "size": "xl",
                                 "color": "#ffffff",
                                 "contents": [],
@@ -246,7 +234,7 @@ def get_flex_message(tag):
                             },
                             {
                                 "type": "text",
-                                "text": data["context"],
+                                "text": message.context,
                                 "color": "#ffffff",
                                 "size": "lg",
                                 "wrap": True,
