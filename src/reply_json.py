@@ -200,6 +200,7 @@ def register_tag_message(url, name, comment, registered):
 
 def get_flex_message(tag):
     url = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip3.jpg"
+    webpage = "http://linecorp.com/"
     message = latest_message_from_tag(tag)
     if message is None:
         return None
@@ -240,15 +241,43 @@ def get_flex_message(tag):
                                 "color": "#ffffff",
                                 "size": "lg",
                                 "wrap": True,
-                                "maxLines": 8,
+                                "maxLines": 7,
                                 "gravity": "center",
                                 "flex": 1,
                             },
+                            {
+                                "type": "box",
+                                "layout": "vertical",
+                                "contents": [
+                                    {
+                                        "type": "box",
+                                        "layout": "vertical",
+                                        "contents": [
+                                            {
+                                                "type": "button",
+                                                "action": {
+                                                    "type": "uri",
+                                                    "label": "もっと見る",
+                                                    "uri": webpage,
+                                                },
+                                            }
+                                        ],
+                                        "backgroundColor": "#ffffffee",
+                                        "cornerRadius": "lg",
+                                        "height": "40px",
+                                        "justifyContent": "center",
+                                        "width": "65%",
+                                    }
+                                ],
+                                "alignItems": "center",
+                                "offsetTop": "5px",
+                            }
                         ],
                         "position": "absolute",
                         "paddingAll": "20px",
                         "height": "100%",
                         "justifyContent": "flex-start",
+                        "width": "100%"
                     },
                 ],
                 "paddingAll": "0px",
