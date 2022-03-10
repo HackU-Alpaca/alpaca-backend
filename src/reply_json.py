@@ -47,7 +47,7 @@ def register_tag_message(url, name, comment, registered):
         register_button_message = '登録解除する'
         register_button_send_message = f'{name}を登録解除する'
         register_background_color = '#9C8E7Ecc'  # 半透明茶色
-        status_message = '登録済み'
+        status_message = '登録中'
         status_background_color = "#00B900"  # LINEカラー
 
     return {
@@ -224,7 +224,7 @@ def get_flex_message(tag):
                         "contents": [
                             {
                                 "type": "text",
-                                "text": message.sendTo,
+                                "text": f"{message.sendTo}の皆様へ",
                                 "size": "xl",
                                 "color": "#ffffff",
                                 "contents": [],

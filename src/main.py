@@ -52,9 +52,12 @@ def handle_message(event):
     if text_sent_by_user == "登録する":
         line_bot_api.reply_message(
             event.reply_token,
-            messages=FlexSendMessage.new_from_json_dict(
-                get_register_tag_carousel(user_id)
-            )
+            messages=[
+                TextSendMessage(text='ご自身の所属を選択してください。'),
+                FlexSendMessage.new_from_json_dict(
+                    get_register_tag_carousel(user_id)
+                )
+            ]
         )
     # タグを登録
     elif text_sent_by_user.endswith("を登録する"):
@@ -130,7 +133,7 @@ def get_cheer_form():
     return render_template(
         'index.html',
         LIFFID=LIFFID,
-        tags=[tag_doc.id for tag_doc in tag_docs]
+        tags=[tag_doc.id + "の皆様へ" for tag_doc in tag_docs]
     )
 
 
@@ -167,13 +170,13 @@ def post_cheer_form():
 def post_cheer_form_confirm():
     event = request.form.to_dict()
 
-    tag = event['tag']
+    tag = event['tag'][:- len("の皆様へ")]
     message = event['message']
     # Firebase に保存
     message_collection.document().set(
         Message(tag, message).to_dict())
 
-    reply_message = f'応援メッセージを送信しました。\n\n{tag}へ\n{message}'
+    reply_message = f'応援メッセージを送信しました。\n\n{tag}皆様へ\n{message}'
 
     userId = event['userId']
     line_bot_api.push_message(
