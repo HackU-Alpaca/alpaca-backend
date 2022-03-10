@@ -53,17 +53,12 @@
           応援対象を選択してください
         </button>
 
-        {# TODO: firebase から値を取得 #}
         <ul class="dropdown-menu">
-          <li><button class="dropdown-item" type="button" value="医療従事者の皆様">
-            医療従事者の皆様
-          </button></li>
-          <li><button class="dropdown-item" type="button" value="飲食店の皆様">
-            飲食店の皆様
-          </button></li>
-          <li><button class="dropdown-item" type="button" value="その他">
-            その他
-          </button></li>
+          {% for tag in tags %}
+            <li><button class="dropdown-item" type="button" value="{{tag}}">
+             {{ tag }}
+            </button></li>
+          {% endfor %}
         </ul>
       </div>
     </div>

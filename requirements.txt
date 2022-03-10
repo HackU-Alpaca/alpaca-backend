@@ -1,4 +1,7 @@
+firebase_admin==5.0.1
 Flask==2.0.1
 Flask_Bootstrap==3.3.7.1
 line_bot_sdk==1.19.0
 python-dotenv==0.19.2
+# source.organizeImports
+isort

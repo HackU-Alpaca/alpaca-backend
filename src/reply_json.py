@@ -1,44 +1,41 @@
+from models.message import count_message_from_tag, latest_message_from_tag
+from models.tag import Tag, tag_collection
+from models.user import User
+
+
 # タグを登録するカルーセルを返す
-def get_register_tag_carousel(user_id):
-    # TODO: firebase から情報を取得
-    print(user_id)
+def get_register_tag_carousel(uid):
+    contents = []
 
-    url1 = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip1.jpg"
-    name1 = "医療従事者の皆さん"
-    comment1 = 34
-    registered1 = True
+    user = User.from_uid(uid)
 
-    url2 = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip1.jpg"
-    name2 = "コロナに感染した皆さん"
-    comment2 = 120
-    registered2 = False
+    # 全てのタグ情報からメッセージを作成する
+    tag_docs = tag_collection.stream()
+    for tag_doc in tag_docs:
+        tag = Tag.from_dict(tag_doc.to_dict())
+
+        contents.append(
+            register_tag_message(
+                tag.url,
+                tag.name,
+                count_message_from_tag(tag.name),
+                tag.name in user.tags
+            )
+        )
 
     return {
         "type": "flex",
         "altText": "this is a flex message",
         "contents": {
             "type": "carousel",
-            "contents": [
-                register_tag_message(
-                    url1,
-                    name1,
-                    comment1,
-                    registered1
-                ),
-                register_tag_message(
-                    url2,
-                    name2,
-                    comment2,
-                    registered2
-                )
-            ]
+            "contents": contents
         }
     }
 
 
 # 登録済み・未登録のタグを返す
 def register_tag_message(url, name, comment, registered):
-    if registered:
+    if not registered:
         register_icon_url = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip14.png"
         register_button_message = '登録する'
         register_button_send_message = f'{name}を登録する'
@@ -50,11 +47,12 @@ def register_tag_message(url, name, comment, registered):
         register_button_message = '登録解除する'
         register_button_send_message = f'{name}を登録解除する'
         register_background_color = '#9C8E7Ecc'  # 半透明茶色
-        status_message = '登録済み'
+        status_message = '登録中'
         status_background_color = "#00B900"  # LINEカラー
 
     return {
         "type": "bubble",
+        "size": "kilo",
         "body": {
             "type": "box",
             "layout": "vertical",
@@ -64,7 +62,7 @@ def register_tag_message(url, name, comment, registered):
                     "url": url,
                     "size": "full",
                     "aspectMode": "cover",
-                    "aspectRatio": "2:3",
+                    "aspectRatio": "250:275",
                     "gravity": "top"
                 },
                 {
@@ -167,7 +165,7 @@ def register_tag_message(url, name, comment, registered):
                     "offsetStart": "0px",
                     "offsetEnd": "0px",
                     "backgroundColor": register_background_color,
-                    "paddingAll": "20px",
+                    "paddingAll": "10px",
                     "paddingTop": "18px"
                 },
                 {
@@ -191,63 +189,66 @@ def register_tag_message(url, name, comment, registered):
                     "height": "25px",
                     "width": "53px"
                 },
-
             ],
             "paddingAll": "0px"
         },
-
     }
 
 
-def get_flex_message():
+def get_flex_message(tag):
     url = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip3.jpg"
-    name = "医療従事者の皆様へ"
-    message = "いつもありがとうございます\nあああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ"
+    message = latest_message_from_tag(tag)
+    if message is None:
+        return None
 
     return {
-        "type": "bubble",
-        "body": {
-            "type": "box",
-            "layout": "vertical",
-            "contents": [
-                {
-                    "type": "image",
-                    "url": url,
-                    "size": "full",
-                    "aspectMode": "cover",
-                    "aspectRatio": "1:1",
-                    "gravity": "center",
-                },
-                {
-                    "type": "box",
-                    "layout": "vertical",
-                    "contents": [
-                        {
-                            "type": "text",
-                            "text": name,
-                            "size": "xl",
-                            "color": "#ffffff",
-                            "contents": [],
-                            "weight": "regular",
-                            "flex": 0,
-                        },
-                        {
-                            "type": "text",
-                            "text": message,
-                            "color": "#ffffff",
-                            "size": "lg",
-                            "wrap": True,
-                            "maxLines": 8,
-                            "gravity": "center",
-                            "flex": 1,
-                        },
-                    ],
-                    "position": "absolute",
-                    "paddingAll": "20px",
-                    "height": "100%",
-                    "justifyContent": "flex-start",
-                },
-            ],
-            "paddingAll": "0px",
-        },
+        "type": "flex",
+        "altText": "this is a flex message",
+        "contents": {
+            "type": "bubble",
+            "body": {
+                "type": "box",
+                "layout": "vertical",
+                "contents": [
+                    {
+                        "type": "image",
+                        "url": url,
+                        "size": "full",
+                        "aspectMode": "cover",
+                        "aspectRatio": "1:1",
+                        "gravity": "center",
+                    },
+                    {
+                        "type": "box",
+                        "layout": "vertical",
+                        "contents": [
+                            {
+                                "type": "text",
+                                "text": f"{message.sendTo}の皆様へ",
+                                "size": "xl",
+                                "color": "#ffffff",
+                                "contents": [],
+                                "weight": "regular",
+                                "flex": 0,
+                            },
+                            {
+                                "type": "text",
+                                "text": message.context,
+                                "color": "#ffffff",
+                                "size": "lg",
+                                "wrap": True,
+                                "maxLines": 8,
+                                "gravity": "center",
+                                "flex": 1,
+                            },
+                        ],
+                        "position": "absolute",
+                        "paddingAll": "20px",
+                        "height": "100%",
+                        "justifyContent": "flex-start",
+                    },
+                ],
+                "paddingAll": "0px",
+            },
+        }
     }

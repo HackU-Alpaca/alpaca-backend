@@ -1,39 +1,22 @@
-from flask import Flask, request, abort, render_template
-from flask_bootstrap import Bootstrap
-from linebot import (
-    LineBotApi, WebhookHandler
-)
-from linebot.exceptions import (
-    InvalidSignatureError
-)
-from linebot.models import (
-    MessageEvent,
-    # PostbackEvent,
-    StickerSendMessage,
-    TextMessage,
-    FlexSendMessage,
-    TextSendMessage,
-)
-from reply_json import get_register_tag_carousel, get_flex_message
-from NGdetector import NGdetector
 import os
-import dotenv
+
+from flask import Flask, abort, jsonify, render_template, request
+from flask_bootstrap import Bootstrap
+from linebot.exceptions import InvalidSignatureError
+from linebot.models import (FlexSendMessage, MessageEvent, StickerSendMessage,
+                            TextMessage, TextSendMessage)
+
+from models.message import Message, message_collection
+from models.tag import tag_collection
+from models.user import User, user_ids_from_tag
+from NGdetector.NGdetector import NGdetector
+from reply_json import get_flex_message, get_register_tag_carousel
+from settings import LIFFID, handler, line_bot_api
 
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
-
-# =========================
-# 環境変数取得
-# LINE Developers: アクセストークン/ChannelSecret
-# =========================
-dotenv.load_dotenv()
-CHANNEL_ACCESS_TOKEN = os.environ["CHANNEL_ACCESS_TOKEN"]
-CHANNEL_SECRET = os.environ["CHANNEL_SECRET"]
-LIFFID = os.environ["LIFFID"]
-
-line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
-handler = WebhookHandler(CHANNEL_SECRET)
 NG_detector = NGdetector()
+
 
 # =========================
 # Webhookからのリクエストの署名検証部分
@@ -69,22 +52,37 @@ def handle_message(event):
     if text_sent_by_user == "登録する":
         line_bot_api.reply_message(
             event.reply_token,
-            messages=FlexSendMessage.new_from_json_dict(
-                get_register_tag_carousel(user_id)
-            )
+            messages=[
+                TextSendMessage(text='ご自身の所属を選択してください。'),
+                FlexSendMessage.new_from_json_dict(
+                    get_register_tag_carousel(user_id)
+                )
+            ]
         )
     # タグを登録
     elif text_sent_by_user.endswith("を登録する"):
-        tag = text_sent_by_user[:len("を登録する")]
-        # TODO: firebase に登録
+        tag = text_sent_by_user[:- len("を登録する")]
+
+        user = User.from_uid(user_id)
+        user.add_tag(tag)
+        user.ref.set(
+            user.to_dict(),
+        )
+
         line_bot_api.reply_message(
             event.reply_token,
             messages=TextSendMessage(text=f'{tag}を登録しました')
         )
     # タグを登録解除
     elif text_sent_by_user.endswith("を登録解除する"):
-        tag = text_sent_by_user[:len("を登録解除する")]
-        # TODO: firebase から削除
+        tag = text_sent_by_user[:- len("を登録解除する")]
+
+        user = User.from_uid(user_id)
+        user.remove_tag(tag)
+        user.ref.set(
+            user.to_dict(),
+        )
+
         line_bot_api.reply_message(
             event.reply_token,
             messages=TextSendMessage(text=f'{tag}を登録解除しました')
@@ -92,16 +90,38 @@ def handle_message(event):
 
 
 # 毎日のメッセージを送信する
+# 登録しているタグごとに 1日1回のメッセージを送信
+# MEMO:
+# schedule.every() などで実装すべきであるが，
+# ハッカソンの発表で使用しやすいように /send_daily_message へのアクセルをトリガーとし,
+# Heroku scheduler で定期実行を行う
 @app.route('/send_daily_message', methods=['GET'])
 def send_daily_message():
-    # TODO:
-    # 1. Firebase からタグ情報を全て取得する
-    # 2. タグで forループ (3~5)
-    # 3. where(tag) でユーザーを取得
-    # 4. ユーザーが存在する場合に, get_flex_message でメッセージを取得
-    # 5. ユーザーに対してメッセージを送信
-    #    line_bot_api.push_message ...
-    return get_flex_message()
+    result = {}
+
+    tag_docs = tag_collection.stream()
+    for tag_doc in tag_docs:
+        user_ids = user_ids_from_tag(tag_doc.id)
+
+        # ユーザーが存在する場合のみ処理を継続
+        if len(user_ids) == 0:
+            continue
+
+        # 直近24時間以内のメッセージを検索
+        message = get_flex_message(tag_doc.id)
+        if message is None:
+            continue
+
+        # メッセージを送信（送信数をメモ）
+        result[tag_doc.id] = len(user_ids)
+        line_bot_api.multicast(
+            user_ids,
+            FlexSendMessage.new_from_json_dict(
+                message
+            )
+        )
+
+    return jsonify(result)
 
 
 # =========================
@@ -109,8 +129,12 @@ def send_daily_message():
 # =========================
 @app.route('/cheer-form', methods=['GET'])
 def get_cheer_form():
-    # TODO: タグ一覧を渡す
-    return render_template('index.html', LIFFID=LIFFID)
+    tag_docs = tag_collection.stream()
+    return render_template(
+        'index.html',
+        LIFFID=LIFFID,
+        tags=[tag_doc.id + "の皆様へ" for tag_doc in tag_docs]
+    )
 
 
 # 確認画面に遷移
@@ -126,7 +150,7 @@ def post_cheer_form():
     # バリデーションを走らせる
     # 1. 値が入力されているかの確認
     # 2. 誹謗中傷フィルタリング
-    
+
     # NGワードの有無判定
     # NGDetector.check(text:str)->bool
     # バリデーション実行時に使う
@@ -145,12 +169,14 @@ def post_cheer_form():
 @app.route('/cheer-form-confirm', methods=['POST'])
 def post_cheer_form_confirm():
     event = request.form.to_dict()
-    print(event)
 
-    # TODO: firebase に保存
-    tag = event['tag']
+    tag = event['tag'][:- len("の皆様へ")]
     message = event['message']
-    reply_message = f'応援メッセージを送信しました。\n\n{tag}へ\n{message}'
+    # Firebase に保存
+    message_collection.document().set(
+        Message(tag, message).to_dict())
+
+    reply_message = f'応援メッセージを送信しました。\n\n{tag}皆様へ\n{message}'
 
     userId = event['userId']
     line_bot_api.push_message(
