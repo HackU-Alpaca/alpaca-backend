@@ -1,10 +1,12 @@
 import os
+import re
 
 from flask import Flask, abort, jsonify, render_template, request
 from flask_bootstrap import Bootstrap
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (FlexSendMessage, MessageEvent, StickerSendMessage,
                             TextMessage, TextSendMessage)
+
 from message_form import MessageForm
 from models.message import *
 from models.tag import tag_collection
@@ -186,15 +188,16 @@ def post_cheer_form_confirm():
     return render_template('end.html')
 
 
-@app.route('/get_messages_by_tag/', methods=['GET'])
-def get_cheer_message_by_tag():
+@app.route('/get_messages_by_tags/', methods=['GET'])
+def get_cheer_message_by_tags():
     req = request.args
 
     # パラメータ取得
-    tag = req.get('tag')
+    tags = req.get('tags')
+    tags = re.sub(r'(\[|\'|\]|\s)', '', tags).split(',')  # type: ignore
     num_of_message = req.get('num_of_message', type=int)
 
-    return get_messages_by_tag(tag, num_of_message)
+    return get_messages_by_tags(tags, num_of_message)
 
 
 # python main.py　で動作
