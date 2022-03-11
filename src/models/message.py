@@ -30,28 +30,30 @@ def latest_message_from_tag(tag):
     return Message.from_dict(
         message[0].to_dict()) if len(message) != 0 else None
 
+
 def get_messages_by_tag(tag, num_of_massage):
     messages = message_collection.where(
         u'sendTo',
         u'==',
         tag).limit(num_of_massage).get()
 
-    message_list =[]
+    message_list = []
     for message in messages:
         message_list.append(message.to_dict())
 
     return_json = json.dumps({"messages": message_list}, ensure_ascii=False)
     return return_json
 
+
 class Message(object):
     def __init__(
-        self,
-        id,
-        sendTo,
-        context,
-        likes=0,
-        created_at=firestore.firestore.SERVER_TIMESTAMP,
-        last_displayed_at=firestore.firestore.SERVER_TIMESTAMP
+            self,
+            id,
+            sendTo,
+            context,
+            likes=0,
+            created_at=firestore.firestore.SERVER_TIMESTAMP,
+            last_displayed_at=firestore.firestore.SERVER_TIMESTAMP
     ):
         self.id = id
         self.sendTo = sendTo
@@ -82,7 +84,7 @@ class Message(object):
         }
 
     def __repr__(self):
-        return(
+        return (
             f'Message(\
                 id={self.id}, \
                 sendTo={self.sendTo}, \
