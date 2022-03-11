@@ -193,6 +193,18 @@ def post_cheer_form_confirm():
 
     return render_template('end.html')
 
+@app.route('/get_messages_by_tag/', methods=['GET'])
+def get_cheer_message_by_tag():
+    req = request.args
+
+    #パラメータ取得
+    tag = req.get("tag")
+    num_of_message = req.get("num_of_message")
+
+    return Message.get_messages_from_tag(tag,num_of_message)
+
+
+
 
 # python main.py　で動作
 if __name__ == "__main__":
