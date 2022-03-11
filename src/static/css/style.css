@@ -2,7 +2,15 @@
     font-family: 'shelby'; /* フォント名 */
     src: url('../fonts/Shelby.otf') format('opentype');
 }
+@font-face {
+    font-family: 'flower'; /* フォント名 */
+    src: url('../fonts/FlowerAndButterfly.ttf') format('truetype');
+}
 
 body {
     font-family: "shelby";
+}
+
+.font-flower {
+    font-family: "flower";
 }
