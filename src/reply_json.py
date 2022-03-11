@@ -199,7 +199,7 @@ def register_tag_message(url, name, comment, registered):
 
 
 def get_flex_message(tag):
-    url = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip3.jpg"
+    url = "https://firebasestorage.googleapis.com/v0/b/alpca-a5aca.appspot.com/o/message_background.png?alt=media"
     webpage = "https://alpaca-frontend.vercel.app/"
     message = latest_message_from_tag(tag)
     if message is None:
