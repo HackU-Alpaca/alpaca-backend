@@ -37,12 +37,12 @@
 {% block title %}応援メッセージ投稿フォーム{% endblock %}
 
 {% block content %}
-<div class="container mt-3">
-  <form class="w-75 mx-auto" id="form" action="/cheer-form" method="POST">
+<div class="container my-3">
+  <form class="mx-auto" id="form" action="/cheer-form" method="POST">
 
     {# 対象 #}
-    <div class="col my-3">
-      <h5 class="text-md-left trn h5">Dear</h5>
+    <div class="col my-2">
+      <span class="text-md-left trn font-shelby">Dear</span>
       <input type="hidden" id="tag" name="tag"/>
 
       <div class="dropdown">
@@ -54,6 +54,7 @@
           data-toggle="dropdown"
           aria-haspopup="true"
           aria-expanded="false"
+          style="border: 1px solid #ced4da !important;"
         >
           応援対象を選択してください
         </button>
@@ -69,8 +70,8 @@
     </div>
 
     {# 応援内容 #}
-    <div class="col my-3">
-      <h5 class="text-md-left trn h5">Message</h5>
+    <div class="col my-2">
+      <span class="text-md-left trn font-shelby">Message</span>
       <textarea class="form-control trn" type="text" id="message" name="message" rows="4"></textarea>
     </div>
 
@@ -78,8 +79,8 @@
     <input type="hidden" id="userId" name="userId"/>
 
     {# 確認画面に遷移 #}
-    <div class="row justify-content-center mt-5">
-      <button type="submit" class="btn custom-btn-primary col-6">
+    <div class="row justify-content-center my-3">
+      <button type="submit" class="btn custom-btn-primary col-4">
         <i class="bi bi-send"></i> 送信
       </button>
     </div>
