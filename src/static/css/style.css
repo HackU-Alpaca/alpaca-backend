@@ -7,8 +7,18 @@
     src: url('../fonts/FlowerAndButterfly.ttf') format('truetype');
 }
 
+html {
+    font-size: 13px;
+} 
+
 body {
+    color: #808080;
+}
+
+
+.font-shelby {
     font-family: "shelby";
+    font-size: 25px;
 }
 
 .font-flower {

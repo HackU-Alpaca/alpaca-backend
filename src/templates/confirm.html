@@ -14,13 +14,13 @@
 {% block title %}応援メッセージ投稿フォーム{% endblock %}
 
 {% block content %}
-<div class="container mt-3">
-  <form class="w-75 mx-auto" id="form" action="/cheer-form-confirm" method="POST">
+<div class="container my-3">
+  <form class="mx-auto" id="form" action="/cheer-form-confirm" method="POST">
     <h3 class="text-center font-flower">確認画面</h3>
 
     {# 対象 #}
-    <div class="col my-3">
-      <h5 class="text-md-left trn">Dear</h5>
+    <div class="col my-2">
+      <span class="text-md-left trn font-shelby">Dear</span>
       <input
         id="tag"
         name="tag"
@@ -31,21 +31,23 @@
     </div>
 
     {# 応援内容 #}
-    <div class="col my-3">
-      <h5 class="text-md-left trn">Message</h5>
-      <input
+    <div class="col my-2">
+      <span class="text-md-left trn font-shelby">Message</span>
+      <textarea
+        class="form-control trn"
         id="message"
         name="message"
-        value="{{ message }}"
-        style="outline:none; border:none;"
-        readonly/>
+        rows="4"
+        readonly
+        style="background-color: #f5f5f5;"
+      >{{ message }}</textarea>
     </div>
 
     {# ユーザーIDを保存 #}
     <input type="hidden" id="userId" name="userId" value="{{ userId }}"/>
 
     {# 投稿ボタン・戻るボタン #}
-    <div class="row justify-content-around mt-5">
+    <div class="row justify-content-around my-3">
       <a href="#"
         class="col-4"
         onclick="window.history.back(); return false;"
