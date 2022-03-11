@@ -75,9 +75,9 @@ class Message(object):
     @staticmethod
     def from_dict(source):
         return Message(
-            source["id"],
             source["sendTo"],
             source["context"],
+            source["id"],
             source["likes"],
             source["createdAt"],
             source["lastDisplayedAt"]
