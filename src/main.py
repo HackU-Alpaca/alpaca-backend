@@ -199,8 +199,8 @@ def get_cheer_message_by_tag():
     req = request.args
 
     # パラメータ取得
-    tag = req.get("tag")
-    num_of_message = req.get("num_of_message", type=int)
+    tag = req.get('tag')
+    num_of_message = req.get('num_of_message', type=int)
 
     return get_messages_by_tag(tag, num_of_message)
 
