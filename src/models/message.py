@@ -34,11 +34,11 @@ def latest_message_from_tag(tag):
         message[0].to_dict()) if len(message) != 0 else None
 
 
-def get_messages_by_tag(tag, num_of_massage):
+def get_messages_by_tags(tags, num_of_massage):
     messages = message_collection.where(
         u'sendTo',
-        u'==',
-        tag).limit(num_of_massage).get()
+        u'in',
+        tags).limit(num_of_massage).get()
 
     message_list = []
     for message in messages:
