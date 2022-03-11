@@ -5,9 +5,8 @@ from flask_bootstrap import Bootstrap
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import (FlexSendMessage, MessageEvent, StickerSendMessage,
                             TextMessage, TextSendMessage)
-
 from message_form import MessageForm
-from models.message import Message, message_collection
+from models.message import *
 from models.tag import tag_collection
 from models.user import User, user_ids_from_tag
 from reply_json import get_flex_message, get_register_tag_carousel
@@ -169,8 +168,10 @@ def post_cheer_form_confirm():
     tag = event['tag'][:- len("の皆様へ")]
     message = event['message']
     # Firebase に保存
-    message_collection.document().set(
-        Message(tag, message).to_dict())
+    msg = Message(tag, message)
+    message_collection.document(msg.id).set(
+        msg.to_dict()
+    )
 
     reply_message = f'応援メッセージを送信しました。\n\n{tag}の皆様へ\n{message}'
 
@@ -190,10 +191,10 @@ def get_cheer_message_by_tag():
     req = request.args
 
     # パラメータ取得
-    tag = req.get("tag")
-    num_of_message = req.get("num_of_message", type=int)
+    tag = req.get('tag')
+    num_of_message = req.get('num_of_message', type=int)
 
-    return Message.get_messages_by_tag(tag, num_of_message)
+    return get_messages_by_tag(tag, num_of_message)
 
 
 # python main.py　で動作

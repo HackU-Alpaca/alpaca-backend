@@ -1,5 +1,7 @@
 import datetime
 import json
+import random
+import string
 
 from firebase_admin import firestore
 from settings import db
@@ -41,16 +43,21 @@ def get_messages_by_tag(tag, num_of_massage):
     for message in messages:
         message_list.append(message.to_dict())
 
-    return_json = json.dumps({"messages": message_list}, ensure_ascii=False)
+    return_json = json.dumps({"messages": message_list},default=str,ensure_ascii=False)
     return return_json
+
+
+# n桁のランダム文字列を返す: 7we4CMGjTj
+def random_id(n):
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=n))
 
 
 class Message(object):
     def __init__(
             self,
-            id,
             sendTo,
             context,
+            id=random_id(10),  # メッセージ識別ID
             likes=0,
             created_at=firestore.firestore.SERVER_TIMESTAMP,
             last_displayed_at=firestore.firestore.SERVER_TIMESTAMP
@@ -75,7 +82,7 @@ class Message(object):
 
     def to_dict(self):
         return {
-            "if": self.id,
+            "id": self.id,
             "sendTo": self.sendTo,
             "context": self.context,
             "likes": self.likes,
