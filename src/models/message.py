@@ -43,11 +43,6 @@ def get_messages_by_tag(tag, num_of_massage):
     return_json = json.dumps({"messages": message_list}, ensure_ascii=False)
     return return_json
 
-
-
-
-
-
 class Message(object):
     def __init__(
         self,
