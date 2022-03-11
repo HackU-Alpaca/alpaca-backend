@@ -127,6 +127,11 @@ def send_daily_message():
 # =========================
 # LIFE
 # =========================
+@app.route('/favicon.ico')
+def favicon():
+    return app.send_static_file('favicon.ico')
+
+
 @app.route('/cheer-form', methods=['GET'])
 def get_cheer_form():
     tag_docs = tag_collection.stream()
