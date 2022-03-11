@@ -25,7 +25,7 @@ def get_register_tag_carousel(uid):
 
     return {
         "type": "flex",
-        "altText": "this is a flex message",
+        "altText": "FlexMessage: ユーザー登録メッセージです",
         "contents": {
             "type": "carousel",
             "contents": contents
@@ -207,7 +207,7 @@ def get_flex_message(tag):
 
     return {
         "type": "flex",
-        "altText": "this is a flex message",
+        "altText": "FlexMessage: 応援メッセージです",
         "contents": {
             "type": "bubble",
             "body": {
