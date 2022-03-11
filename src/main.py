@@ -6,7 +6,7 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import (FlexSendMessage, MessageEvent, StickerSendMessage,
                             TextMessage, TextSendMessage)
 
-from models.message import Message, message_collection
+from models.message import *
 from models.tag import tag_collection
 from models.user import User, user_ids_from_tag
 from NGdetector.NGdetector import NGdetector
@@ -202,7 +202,7 @@ def get_cheer_message_by_tag():
     tag = req.get("tag")
     num_of_message = req.get("num_of_message", type=int)
 
-    return Message.get_messages_by_tag(tag, num_of_message)
+    return get_messages_by_tag(tag, num_of_message)
 
 
 # python main.py　で動作
