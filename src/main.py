@@ -6,21 +6,24 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import (FlexSendMessage, MessageEvent, StickerSendMessage,
                             TextMessage, TextSendMessage)
 
+from message_form import MessageForm
 from models.message import Message, message_collection
 from models.tag import tag_collection
 from models.user import User, user_ids_from_tag
-from NGdetector.NGdetector import NGdetector
 from reply_json import get_flex_message, get_register_tag_carousel
 from settings import LIFFID, handler, line_bot_api
 
+SECRET_KEY = os.urandom(32)
 app = Flask(__name__)
 bootstrap = Bootstrap(app)
-NG_detector = NGdetector()
+app.config['SECRET_KEY'] = SECRET_KEY  # formのCSRFトークンのSecretKey
 
 
 # =========================
 # Webhookからのリクエストの署名検証部分
 # =========================
+
+
 @app.route("/callback", methods=['POST'])
 def callback():
     # 署名検証のための値
@@ -132,40 +135,28 @@ def favicon():
     return app.send_static_file('favicon.ico')
 
 
-@app.route('/cheer-form', methods=['GET'])
-def get_cheer_form():
+@app.route('/cheer-form', methods=['GET', 'POST'])
+def cheer_form():
+    form = MessageForm()
+
+    if request.method == "POST":
+        event = request.form.to_dict()
+        tag = event['tag']
+        message = event['message']
+        userId = event['userId']
+        if form.validate_on_submit():
+            return render_template(
+                'confirm.html',
+                userId=userId,
+                tag=tag,
+                message=message)
     tag_docs = tag_collection.stream()
     return render_template(
         'index.html',
+        form=form,
         LIFFID=LIFFID,
         tags=[tag_doc.id + "の皆様へ" for tag_doc in tag_docs]
     )
-
-
-# 確認画面に遷移
-# - バリデーション実行
-@app.route('/cheer-form', methods=['POST'])
-def post_cheer_form():
-    event = request.form.to_dict()
-    tag = event['tag']
-    message = event['message']
-    userId = event['userId']
-
-    # TODO:
-    # バリデーションを走らせる
-    # 1. 値が入力されているかの確認
-    # 2. 誹謗中傷フィルタリング
-
-    # NGワードの有無判定
-    # NGDetector.check(text:str)->bool
-    # バリデーション実行時に使う
-    # TODO:
-    # 誹謗中傷フィルタ(DeepLearning)
-    return render_template(
-        'confirm.html',
-        userId=userId,
-        tag=tag,
-        message=message)
 
 
 # 確認画面から投稿, 終了画面に遷移
