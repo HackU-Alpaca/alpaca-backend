@@ -181,7 +181,7 @@ def post_cheer_form_confirm():
     message_collection.document().set(
         Message(tag, message).to_dict())
 
-    reply_message = f'応援メッセージを送信しました。\n\n{tag}皆様へ\n{message}'
+    reply_message = f'応援メッセージを送信しました。\n\n{tag}の皆様へ\n{message}'
 
     userId = event['userId']
     line_bot_api.push_message(
