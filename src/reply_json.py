@@ -230,7 +230,7 @@ def get_flex_message(tag):
                                 "type": "text",
                                 "text": f"{message.sendTo}の皆様へ",
                                 "size": "xl",
-                                "color": "#ffffff",
+                                "color": "#a9a9a9",
                                 "contents": [],
                                 "weight": "regular",
                                 "flex": 0,
@@ -238,11 +238,12 @@ def get_flex_message(tag):
                             {
                                 "type": "text",
                                 "text": message.context,
-                                "color": "#ffffff",
+                                "color": "#a9a9a9",
                                 "size": "lg",
                                 "wrap": True,
-                                "maxLines": 7,
+                                "maxLines": 6,
                                 "gravity": "center",
+                                "offsetStart": "3px",
                                 "flex": 1,
                             },
                             {
