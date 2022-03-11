@@ -36,14 +36,14 @@ def get_register_tag_carousel(uid):
 # 登録済み・未登録のタグを返す
 def register_tag_message(url, name, comment, registered):
     if not registered:
-        register_icon_url = "https://firebasestorage.googleapis.com/v0/b/alpca-a5aca.appspot.com/o/register.png?alt=media&token=2572cc48-8bd9-49dd-8316-00a63a0faf98"
+        register_icon_url = "https://firebasestorage.googleapis.com/v0/b/alpca-a5aca.appspot.com/o/register.png?alt=media&token=2572cc48-8bd9-49dd-8316-00a63a0faf98"  # noqa: E501
         register_button_message = '登録する'
         register_button_send_message = f'{name}を登録する'
         register_background_color = '#55BCABaa'  # 半透明緑
         status_message = '未登録'
         status_background_color = "#00B90044"  # 半透明LINEカラー
     else:
-        register_icon_url = "https://firebasestorage.googleapis.com/v0/b/alpca-a5aca.appspot.com/o/unregister.png?alt=media&token=1475f41c-219e-4bcd-8142-445ac36bd97e"
+        register_icon_url = "https://firebasestorage.googleapis.com/v0/b/alpca-a5aca.appspot.com/o/unregister.png?alt=media&token=1475f41c-219e-4bcd-8142-445ac36bd97e"  # noqa: E501
         register_button_message = '登録解除する'
         register_button_send_message = f'{name}を登録解除する'
         register_background_color = '#9C8E7Ecc'  # 半透明茶色
