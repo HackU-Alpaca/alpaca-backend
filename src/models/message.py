@@ -41,7 +41,7 @@ def get_messages_by_tag(tag, num_of_massage):
     for message in messages:
         message_list.append(message.to_dict())
 
-    return_json = json.dumps({"messages": message_list}, ensure_ascii=False)
+    return_json = json.dumps({"messages": message_list},default=str,ensure_ascii=False)
     return return_json
 
 
