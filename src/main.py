@@ -8,7 +8,7 @@ from linebot.models import (FlexSendMessage, MessageEvent, StickerSendMessage,
                             TextMessage, TextSendMessage)
 
 from message_form import MessageForm
-from models.message import *
+from models.message import *  # noqa: F403
 from models.tag import tag_collection
 from models.user import User, user_ids_from_tag
 from reply_json import get_flex_message, get_register_tag_carousel
