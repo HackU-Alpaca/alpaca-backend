@@ -31,6 +31,18 @@
         visibleItem.text(selectedValue);
          $('#tag').val(selectedValue);
     });
+
+    // 文字数カウント
+    $('#message').keyup(function(){
+      console.log("keyup!");
+      var count = $(this).val().length;
+      $('#countChars').text(count+"/120");
+      if (count > 120) {
+        $('#countChars').css('color', 'red');
+      } else {
+        $('#countChars').css('color', 'black');
+      }
+    });
   </script>
 {% endblock %}
 
@@ -73,9 +85,12 @@
     <div class="col my-2">
       <span class="text-md-left trn font-shelby">{{ form.message.label }}</span>
       {% for error in form.message.errors %}
+      <div class="form-group">
         <span style="color: red;">{{ error }}</span>
+      </div>
       {% endfor %}
       {{ form.message(class_="form-control trn") }}
+      <span id="countChars" class="pull-right">0/120</span>
     </div>
 
     {# ユーザーIDを保存 #}

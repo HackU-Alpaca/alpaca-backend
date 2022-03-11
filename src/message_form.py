@@ -29,6 +29,9 @@ class MessageForm(FlaskForm):
         if len(message.data) < 5:
             raise ValidationError("メッセージは5文字以上にしてください。")
 
+        if len(message.data) > 120:
+            raise ValidationError("メッセージは120文字以下にしてください。")
+
         if not self.ng_detector.check(message.data):
             raise ValidationError("メッセージに禁止ワードが入っています。")
 
