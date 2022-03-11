@@ -1,0 +1,8 @@
+@font-face {
+    font-family: 'shelby'; /* フォント名 */
+    src: url('../fonts/Shelby.otf') format('opentype');
+}
+
+body {
+    font-family: "shelby";
+}
