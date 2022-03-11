@@ -4,7 +4,7 @@ import os
 class NGdetector:
     __NG_words = []
 
-    def __init__(self, threshold=-0.5):
+    def __init__(self):
         dir = os.path.dirname(os.path.abspath(__file__))
         with open(f"{dir}/NGwords.csv", 'r', encoding='utf-8') as f:
             for w in f.readlines():
