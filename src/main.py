@@ -178,8 +178,10 @@ def post_cheer_form_confirm():
     tag = event['tag'][:- len("の皆様へ")]
     message = event['message']
     # Firebase に保存
-    message_collection.document().set(
-        Message(tag, message).to_dict())
+    msg = Message(tag, message)
+    message_collection.document(msg.id).set(
+        msg.to_dict()
+    )
 
     reply_message = f'応援メッセージを送信しました。\n\n{tag}の皆様へ\n{message}'
 
