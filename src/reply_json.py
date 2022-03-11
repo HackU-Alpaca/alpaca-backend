@@ -200,7 +200,7 @@ def register_tag_message(url, name, comment, registered):
 
 def get_flex_message(tag):
     url = "https://scdn.line-apps.com/n/channel_devcenter/img/flexsnapshot/clip/clip3.jpg"
-    webpage = "http://linecorp.com/"
+    webpage = "https://alpaca-frontend.vercel.app/"
     message = latest_message_from_tag(tag)
     if message is None:
         return None
