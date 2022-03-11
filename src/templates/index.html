@@ -1,14 +1,7 @@
-{% extends "bootstrap/base.html" %}
-
-{%- block metas %}
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-{%- endblock metas %}
+{% extends "base.html" %}
 
 {% block scripts %}
 {{super()}}
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-  <script src="https://static.line-scdn.net/liff/edge/versions/2.18.2/sdk.js"></script>
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>  
   <script>
     $(window).on('load', async function() {
       const LIFFID = {{ LIFFID | tojson }};
@@ -37,7 +30,7 @@
 
     {# 対象 #}
     <div class="col my-3">
-      <h5 class="text-md-left trn h5">対象</h5>
+      <h5 class="text-md-left trn h5">Dear</h5>
       <input type="hidden" id="tag" name="tag"/>
 
       <div class="dropdown">
@@ -65,7 +58,7 @@
 
     {# 応援内容 #}
     <div class="col my-3">
-      <h5 class="text-md-left trn h5">応援内容</h5>
+      <h5 class="text-md-left trn h5">Message</h5>
       <textarea class="form-control trn" type="text" id="message" name="message" rows="4"></textarea>
     </div>
 
