@@ -62,10 +62,12 @@ class User(object):
 
     # タグを追加
     def add_tag(self, tag):
-        self.tags.append(tag)
-        self.updated_at = firestore.firestore.SERVER_TIMESTAMP
+        if tag not in self.tags:
+            self.tags.append(tag)
+            self.updated_at = firestore.firestore.SERVER_TIMESTAMP
 
     # タグを削除
     def remove_tag(self, tag):
-        self.tags.remove(tag)
-        self.updated_at = firestore.firestore.SERVER_TIMESTAMP
+        if tag in self.tags:
+            self.tags.remove(tag)
+            self.updated_at = firestore.firestore.SERVER_TIMESTAMP
